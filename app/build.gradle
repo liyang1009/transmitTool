@@ -26,4 +26,5 @@ dependencies {
     compile 'com.android.support:design:23.2.1'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'com.qiniu:qiniu-android-sdk:7.2.+'
+    compile 'id.zelory:compressor:2.1.0'
 }
