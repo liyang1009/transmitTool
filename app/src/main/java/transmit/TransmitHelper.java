@@ -10,6 +10,9 @@ import java.io.InputStreamReader;
  */
 public class TransmitHelper {
 
+
+    private static int SCAN_MOUNT_INTERVAL = 2500;
+    private static int SCAN_FAIL_RETRY_COUNT = 4;
     /**
      * @return
      */
@@ -22,17 +25,15 @@ public class TransmitHelper {
         int loopCount = 0;
 
         while (true) {
-
             commandResult = this.executeCommand();
-            //
             if ((commandResult.indexOf("/mnt/media_rw") > -1)) {
                 isFind = true;
             }
-            if (isFind || loopCount == 4) {
+            if (isFind || loopCount == SCAN_FAIL_RETRY_COUNT) {
                 break;
             }
             try {
-                Thread.sleep(2500);
+                Thread.sleep(SCAN_MOUNT_INTERVAL);
                 loopCount++;
             } catch (InterruptedException e) {
 
@@ -86,8 +87,8 @@ public class TransmitHelper {
             throw new RuntimeException(e);
         }
 
-
     }
+
     public String findSpecifyFolder() {
         StringBuffer detail = new StringBuffer("");
         String rootPath = extractUsbMount();

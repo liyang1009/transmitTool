@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cloudstorage.UploadCloud;
 
@@ -44,7 +43,7 @@ public class DBService {
                 sortOrder                                 // The sort order
         );
 
-        List itemIds = new ArrayList<>();
+        ArrayList itemIds = new ArrayList<>();
         while (cursor.moveToNext()) {
             long itemId = cursor.getLong(
                     cursor.getColumnIndexOrThrow(DBContract.FileEntry._ID));
@@ -62,7 +61,7 @@ public class DBService {
 
 // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(DBContract.FileEntry.COLUMN_NAME, "");
+        values.put(DBContract.FileEntry.COLUMN_NAME, fileName);
         values.put(DBContract.FileEntry.COLUMN_STATUS, -1);
 
 // Insert the new row, returning the primary key value of the new row
@@ -71,7 +70,22 @@ public class DBService {
         return newRowId > 0;
     }
 
+    public boolean removeTransmitRecord(String fileName) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+// Define 'where' part of query.
+        String selection = DBContract.FileEntry.COLUMN_NAME + " = ?";
+// Specify arguments in placeholder order.
+        String[] selectionArgs = {fileName};
+// Issue SQL statement.
+        return db.delete(DBContract.FileEntry.TABLE_NAME, selection, selectionArgs) > 0;
+
+    }
+
     public boolean modifyTransmitRecord(UploadCloud uploadCloud) {
         return true;
+    }
+
+    public void destoryDbConnection(){
+        dbHelper.close();
     }
 }

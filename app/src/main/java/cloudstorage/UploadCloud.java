@@ -2,9 +2,12 @@ package cloudstorage;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
 import com.example.liyang.transmittool.R;
 
 import java.io.ByteArrayOutputStream;
@@ -12,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import controller.ApplicationController;
 import id.zelory.compressor.Compressor;
 
 /**
@@ -19,29 +23,28 @@ import id.zelory.compressor.Compressor;
  * upload the local file to  Cloud storage
  * base page implement the asynctask's ability
  */
-public abstract class UploadCloud extends AsyncTask<File, Integer, Long> {
+public abstract class UploadCloud {
 
-    WeakReference<Activity> mWeakActivity;
+    //WeakReference<Activity> mWeakActivity;
     ProgressBar progressBar;
+    WeakReference<ApplicationController> callBack;
 
-    public UploadCloud(Activity activity) {
-        mWeakActivity = new WeakReference<Activity>(activity);
+    public UploadCloud(ApplicationController applicationController) {
+        //mWeakActivity = new WeakReference<Activity>(activity);
+        this.callBack = new WeakReference<ApplicationController>(applicationController);
     }
 
-    File uploadFile;
 
-    abstract void uoloadFile(File file);
+    public abstract void uoloadFile(File file);
 
-    @Override
-    protected Long doInBackground(File... params) {
-        uoloadFile(params[0]);
-        return null;
+
+    public void stopTasks() {
     }
 
-    protected byte[] getCompressedFileBytes() {
+    protected byte[] getCompressedFileBytes(File uploadFile) {
         Bitmap compressedImageBitmap = null;
         try {
-            compressedImageBitmap = new Compressor(mWeakActivity.get()).compressToBitmap(uploadFile);
+            compressedImageBitmap = new Compressor(callBack.get().getActivity()).compressToBitmap(uploadFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,24 +57,24 @@ public abstract class UploadCloud extends AsyncTask<File, Integer, Long> {
 
     /**
      * dynamically add the progress to the relativelayout component in  the activity
-     * @param marginHeight
-     * the height of the will be created progressbar
+     *
+     * @param marginHeight the height of the will be created progressbar
      */
     public void createProgressBar(int marginHeight) {
 
-        //progressBar =(ProgressBar)  mWeakActivity.get().findViewById(R.id.determinateBar);
-        //progressBar.getProgressDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
+        progressBar = (ProgressBar) callBack.get().getActivity().findViewById(R.id.determinateBar);
+        // progressBar.getProgressDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
 
-        RelativeLayout relativelayout = (RelativeLayout) mWeakActivity.get().findViewById(R.id.viewcontent);
-        progressBar = new ProgressBar(mWeakActivity.get(), null, android.R.attr.progressBarStyleHorizontal);
-        RelativeLayout.LayoutParams layoutparams = new RelativeLayout.LayoutParams(700, 400);
-        marginHeight += 40;
-        layoutparams.setMargins(0, marginHeight, 0, 0);
-        progressBar.setLayoutParams(layoutparams);
-        RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        progressBar.setScaleY(3f);
-        relativelayout.addView(progressBar);
+//        RelativeLayout relativelayout = (RelativeLayout) mWeakActivity.get().findViewById(R.id.viewcontent);
+//        progressBar = new ProgressBar(mWeakActivity.get(), null, android.R.attr.progressBarStyleHorizontal);
+//        RelativeLayout.LayoutParams layoutparams = new RelativeLayout.LayoutParams(700, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//        marginHeight += 20;
+//        layoutparams.setMargins(0, marginHeight, 0, 0);
+//        progressBar.setLayoutParams(layoutparams);
+//        RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
+//                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//        progressBar.setScaleY(3f);
+//        relativelayout.addView(progressBar);
 //        TextView textView = new TextView(mWeakActivity.get());
 //        textView.setLayoutParams(lparams);
 //
