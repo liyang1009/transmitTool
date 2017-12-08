@@ -1,26 +1,19 @@
 package com.example.liyang.transmittool;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import android.os.Build;
-import android.widget.Button;
-
-import java.io.File;
-
-import cloudstorage.QiNiuUpload;
 import controller.ApplicationController;
 
 public class mainActivity extends AppCompatActivity {
@@ -30,24 +23,27 @@ public class mainActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    ApplicationController app = new ApplicationController(this);
+    ApplicationController app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
 
-       final Button startButton = (Button) findViewById(R.id.startButton);
+        final Button startButton = (Button) findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
                 try {
+                    app = new ApplicationController(mainActivity.this);
 
-                        mainActivity.this.app.start(mainActivity.this);
+                    mainActivity.this.app.start(mainActivity.this);
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -59,7 +55,7 @@ public class mainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
                 mainActivity.this.app.stop();
-                Log.i("info","test");
+                Log.i("info", "test");
 
             }
         });
@@ -150,6 +146,7 @@ public class mainActivity extends AppCompatActivity {
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
+
     @Override
     protected void onDestroy() {
 

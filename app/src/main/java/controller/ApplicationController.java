@@ -1,17 +1,13 @@
 package controller;
 
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.example.liyang.transmittool.R;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.concurrent.BlockingDeque;
 
 import cloudstorage.QiNiuUpload;
 import cloudstorage.UploadCloud;
@@ -25,7 +21,7 @@ import transmit.TransmitHelper;
 
 public class ApplicationController {
 
-    WeakReference<Activity> mWeakActivity;
+    private WeakReference<Activity> mWeakActivity;
     TransmitHelper transmitHelper;
     Thread action;
     volatile boolean status = true;
@@ -35,9 +31,9 @@ public class ApplicationController {
 
     public ApplicationController(Activity activity) {
         transmitHelper = new TransmitHelper();
+        this.mWeakActivity = new WeakReference<Activity>(activity);
         uploadCloud = new QiNiuUpload(this);
-        this.mWeakActivity = new WeakReference<Activity>(activity) ;
-         dbService = new DBService(mWeakActivity.get().getApplicationContext());
+        dbService = new DBService(mWeakActivity.get().getApplicationContext());
     }
 
     /**
@@ -50,32 +46,26 @@ public class ApplicationController {
             action = new Thread(new UploadRunable());
             action.start();
 
-            final Button startButton = (Button) activity.findViewById(R.id.startButton);
-
         }
 
 
     }
 
-    public Activity getActivity(){
+    public Activity getActivity() {
         return mWeakActivity.get();
     }
 
-    public void  removeTransmitReord(String fileName){
-
+    public void removeTransmitReord(String fileName) {
         dbService.removeTransmitRecord(fileName);
-
     }
-    public void stop() {
 
+    public void stop() {
 
         this.status = false;
         this.action = null;
-
-
     }
 
-    public  void  dbResourceDestory(){
+    public void dbResourceDestory() {
         this.dbService.destoryDbConnection();
     }
 
@@ -87,9 +77,13 @@ public class ApplicationController {
         DBService dbService = new DBService(mWeakActivity.get().getApplicationContext());
     }
 
+    public void showProgressBar(int percent) {
+
+        ProgressBar progressBar = (ProgressBar) this.mWeakActivity.get().findViewById(R.id.determinateBar);
+        progressBar.setProgress(percent);
+    }
+
     class UploadRunable implements Runnable {
-
-
 
         public void run() {
             //String rootPath = transmitHelper.findSpecifyFolder() + "/100CANON/";
@@ -100,11 +94,10 @@ public class ApplicationController {
 
                 while (status && root.exists()) {
                     File[] children = root.listFiles();
-                    for (File child : children
-                            ) {
+                    for (File child : children) {
                         try {
 
-                            if(!status){
+                            if (!status) {
                                 break;
                             }
                             childPath = child.getAbsolutePath();
@@ -113,7 +106,6 @@ public class ApplicationController {
                                 uploadCloud.uoloadFile(child);
 
                             } else {
-
 
                                 //Log.i("info", "file exists");
                             }
@@ -128,7 +120,6 @@ public class ApplicationController {
                         e.printStackTrace();
                     }
                 }
-
                 uploadCloud.stopTasks();
 
 

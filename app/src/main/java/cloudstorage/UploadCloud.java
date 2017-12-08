@@ -1,12 +1,7 @@
 package cloudstorage;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.AsyncTask;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.example.liyang.transmittool.R;
 
@@ -26,14 +21,12 @@ import id.zelory.compressor.Compressor;
 public abstract class UploadCloud {
 
     //WeakReference<Activity> mWeakActivity;
-    ProgressBar progressBar;
+   // ProgressBar progressBar;
     WeakReference<ApplicationController> callBack;
 
     public UploadCloud(ApplicationController applicationController) {
-        //mWeakActivity = new WeakReference<Activity>(activity);
         this.callBack = new WeakReference<ApplicationController>(applicationController);
     }
-
 
     public abstract void uoloadFile(File file);
 
@@ -62,7 +55,7 @@ public abstract class UploadCloud {
      */
     public void createProgressBar(int marginHeight) {
 
-        progressBar = (ProgressBar) callBack.get().getActivity().findViewById(R.id.determinateBar);
+        //progressBar = (ProgressBar) callBack.get().getActivity().findViewById(R.id.determinateBar);
         // progressBar.getProgressDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN);
 
 //        RelativeLayout relativelayout = (RelativeLayout) mWeakActivity.get().findViewById(R.id.viewcontent);

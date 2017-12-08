@@ -1,40 +1,29 @@
 package cloudstorage;
 
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.TextView;
+
 import com.example.liyang.transmittool.R;
+import com.qiniu.android.common.Zone;
+import com.qiniu.android.http.ResponseInfo;
 import com.qiniu.android.storage.Configuration;
+import com.qiniu.android.storage.UpCompletionHandler;
 import com.qiniu.android.storage.UpProgressHandler;
 import com.qiniu.android.storage.UploadManager;
-import com.qiniu.android.storage.UpCompletionHandler;
-import com.qiniu.android.http.ResponseInfo;
-import com.qiniu.android.common.Zone;
 import com.qiniu.android.storage.UploadOptions;
 
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.RelativeLayout.LayoutParams;
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
-import java.net.URL;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.LinkedList;
 
 import controller.ApplicationController;
-import dao.DBHelper;
-import dao.DBService;
 
 
 /**
@@ -90,7 +79,6 @@ public class QiNiuUpload extends UploadCloud {
     }
 
     public String getToken(String key) {
-        //URLConnection urlConnection = new Url
 
         URL url;
         HttpURLConnection urlConnection = null;
@@ -126,10 +114,10 @@ public class QiNiuUpload extends UploadCloud {
      *
      * @param percent
      */
-    public void showProgressBar(int percent) {
+    public void showProgressBarPercent(int percent) {
 
 
-        progressBar.setProgress(percent);
+//        progressBar.setProgress(percent);
     }
 
     public class UploadTask extends AsyncTask<File, Integer, Long> {
@@ -145,7 +133,6 @@ public class QiNiuUpload extends UploadCloud {
             //final File uploadFile = params[0];
             String filePath = uploadFile.getAbsolutePath();
             String key = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length());
-            ;
             String token = getToken(key);
             byte[] data = QiNiuUpload.this.getCompressedFileBytes(uploadFile);
             uploadManager.put(data, key, token,
@@ -157,8 +144,8 @@ public class QiNiuUpload extends UploadCloud {
                             if (info.isOK()) {
 
                                 if (callBack.get().getActivity() != null) {
-                                    TextView text = (TextView) callBack.get().getActivity().findViewById(R.id.Text);
-                                    text.setText(text.getText() + "\r\n" + uploadFile.getAbsolutePath() + "successful");
+//                                    TextView text = (TextView) callBack.get().getActivity().findViewById(R.id.Text);
+//                                    text.setText(text.getText() + "\r\n" + uploadFile.getAbsolutePath() + "successful");
                                     Log.i("qiniu", "Upload Success");
                                 }
 
@@ -175,7 +162,8 @@ public class QiNiuUpload extends UploadCloud {
                             new UpProgressHandler() {
                                 public void progress(String key, double percent) {
                                     Log.i("qiniu", key + ": " + percent);
-                                    showProgressBar((int) (percent * 100));
+                                    callBack.get().showProgressBar((int) percent * 100);
+                                    //showProgressBarPercent((int) (percent * 100));
                                 }
                             }, null));
             return null;

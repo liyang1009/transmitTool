@@ -1,11 +1,8 @@
 package dao;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import cloudstorage.UploadCloud;
 
 /**
  * Created by liyang on 11/27/17.
